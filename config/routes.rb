@@ -77,6 +77,11 @@ Rails.application.routes.draw do
         end
       end
       resources :follows, only: [:create]
+      resources :github_repos, only: [:index] do
+        collection do
+          post "/update_or_create", to: "github_repos#update_or_create"
+        end
+      end
     end
   end
 
@@ -102,7 +107,6 @@ Rails.application.routes.draw do
   resources :blocks
   resources :notifications, only: [:index]
   resources :tags, only: [:index]
-  resources :analytics, only: [:index]
   resources :stripe_subscriptions, only: %i[create update destroy]
   resources :stripe_active_cards, only: %i[create update destroy]
   resources :live_articles, only: [:index]
@@ -113,6 +117,9 @@ Rails.application.routes.draw do
   resources :videos, only: %i[create new]
   resources :video_states, only: [:create]
   resources :twilio_tokens, only: [:show]
+  resources :html_variants
+  resources :html_variant_trials, only: [:create]
+  resources :html_variant_successes, only: [:create]
   resources :push_notification_subscriptions, only: [:create]
 
   get "/notifications/:username" => "notifications#index"
@@ -229,7 +236,7 @@ Rails.application.routes.draw do
   get "/dashboard" => "dashboards#show"
   get "/dashboard/:which" => "dashboards#show",
       constraints: {
-        which: /organization|user_followers|following_users|reading/
+        which: /organization|organization_user_followers|user_followers|following_users|reading/
       }
   get "/dashboard/:username" => "dashboards#show"
 
